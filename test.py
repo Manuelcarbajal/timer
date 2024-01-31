@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import ttk
 import time
-from playsound import playsound
 
 
 def validate_input(P):
@@ -57,6 +56,7 @@ minute_second_values = [str(i) for i in range(60)]
 time_left = 0
 start_time = 0
 paused = False
+time_paused = 0
 
 # Configurar la validación de entrada
 validate = root.register(validate_input)
@@ -64,21 +64,28 @@ validate_minutes = root.register(validate_minutes_seconds)
 
 
 def start_timer():
-    global time_left, start_time
-    if not paused:
+    global time_left, start_time, time_paused, paused
+    if paused:
+        minute, second = divmod(time_paused, 60)
+        hour, minute = divmod(minute, 60)
+        time_left = hour * 3600 + minute * 60 + second
+        paused = False
+    else:
         hours_value = int(hours.get() if hours.get() else 0)
         minutes_value = int(minutes.get() if minutes.get() else 0)
         seconds_value = int(seconds.get() if seconds.get() else 0)
         time_left = hours_value * 3600 + minutes_value * 60 + seconds_value
+
     start_time = time.time()
-    countdown()
+    countdown()  # icia contador
 
 # pausa el tiempo
 
 
 def toggle_pause():
-    global paused
-    paused = not paused
+    global paused, time_paused, time_left
+    paused = True
+    time_paused = time_left
 
 
 def get_time_left():
@@ -96,18 +103,19 @@ def countdown():
         hours_value, remainder = divmod(int(time_left), 3600)
         minutes_value, seconds_value = divmod(int(remainder), 60)
 
-        # Obtener la fracción de segundos en milisegundos
-        milliseconds = int((time_left - int(time_left)) * 1000)
-
         timer_label.config(
-            text=f'Tiempo restante: {hours_value:02d}:{minutes_value:02d}:{seconds_value:02d}.{milliseconds:03d}')
+            text=f'Tiempo restante: {hours_value:02d}:{minutes_value:02d}:{seconds_value:02d}')
 
         if time_left == 0:
             timer_label.config(text='¡Tiempo terminado!')
             # playsound('audio.mp3')
 
         # Actualizar más frecuentemente (cada 100 ms)
-        root.after(100, countdown)
+        root.after(1000, countdown)
+
+
+print(time_left)
+print(time_paused)
 
 
 entry_label = Label(root, text='Ingrese el tiempo:', font=('Arial', 16),

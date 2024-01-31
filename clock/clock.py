@@ -88,6 +88,7 @@ Label(root, text='sec', font='arial 12',
 
 
 def Timer():
+
     times = int(hrs.get()) * 3600 + int(mins.get()) * 60 + int(sec.get())
 
     def update_timer():
@@ -99,6 +100,7 @@ def Timer():
             mins.set(f'{minute:02d}')
             hrs.set(f'{hour:02d}')
             times -= 1
+
             root.after(1000, update_timer)
         else:
             print('Fin')
@@ -108,6 +110,10 @@ def Timer():
             hrs.set('00')
 
     update_timer()
+
+
+def stop():
+    Timer()
 
 
 def brush():
@@ -131,6 +137,11 @@ def eggs():
 button = Button(root, text='Start', bg='#ea3548', bd=0,
                 fg='#fff', width=20, height=2, font='arial 10 bold', command=Timer)
 button.pack(padx=5, pady=40, side=BOTTOM)
+
+
+button_stop = Button(root, text='Pause', bg='#ea3548', bd=0, border=5,
+                     fg='#fff', width=20, height=2, font='arial 10 bold')
+button_stop.pack(padx=10, pady=0, side=BOTTOM)
 
 
 Image1 = PhotoImage(file='face.png')
